@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../lib/prisma";
 import { hash } from "crypto";
+import { RegisterFormSchema } from "@/pages/lib/definitions";
 
 type ReqData = {
     email: string
@@ -11,9 +12,17 @@ type ReqData = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { email, password, username, displayname }: ReqData = req.body
-    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,6}$/.test(email)) res.status(400).json({ error: "Invalid email." })
-        
-    else {
+    const validatedFields = RegisterFormSchema.safeParse({
+        username: username,
+        displayname: displayname,
+        email: email,
+        password: password
+    })
+
+    if (!validatedFields.success) {
+        res.status(400).json({ error: validatedFields.error.flatten().fieldErrors })
+
+    } else {
         const exists = await prisma.user.findUnique({
             where: {
                 email: email
