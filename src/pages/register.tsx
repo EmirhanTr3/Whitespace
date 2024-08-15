@@ -2,8 +2,10 @@ import { GetServerSidePropsContext } from "next";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
-import { FormState, RegisterFormSchema } from "./lib/definitions";
-import { FormError } from "./components";
+import { FormState, RegisterFormSchema } from "../lib/definitions";
+import { Form, FormBackground, FormBox, FormButton, FormField, FormFields, FormHeader } from "../components";
+import Head from "next/head";
+import Link from "next/link";
 
 export default function Register() {
     const usernameRef = useRef<HTMLInputElement>(null)
@@ -46,25 +48,26 @@ export default function Register() {
         }
     }
 
-    return <form onSubmit={(onSubmit)}>
-        <label>Username:</label><br />
-        <input ref={usernameRef} type="text" name="username" /><br />
-        {state?.errors?.username && <FormError errors={state.errors.username}/>}
-
-        <label>Displayname:</label><br />
-        <input ref={displaynameRef} type="text" name="displayname" /><br />
-        {state?.errors?.displayname && <FormError errors={state.errors.displayname}/>}
-
-        <label>Email:</label><br />
-        <input ref={emailRef} type="text" name="email" /><br />
-        {state?.errors?.email && <FormError errors={state.errors.email}/>}
-
-        <label>Password:</label><br />
-        <input ref={passwordRef} type="password" name="password" /><br />
-        {state?.errors?.password && <FormError errors={state.errors.password}/>}
-
-        <button type="submit">Register</button>
-    </form>
+    return <>
+        <Head>
+            <title>Whitespace - Register</title>
+        </Head>
+        <FormBackground>
+            <FormBox>
+                <FormHeader />
+                <Form onSubmit={onSubmit}>
+                    <FormFields>
+                        <FormField ref={usernameRef} name="username" text="USERNAME" error={state?.errors?.username}></FormField>
+                        <FormField ref={displaynameRef} name="displayname" text="DISPLAY NAME" error={state?.errors?.displayname}></FormField>
+                        <FormField ref={emailRef} name="email" text="EMAIL" error={state?.errors?.email}></FormField>
+                        <FormField ref={passwordRef} name="password" type="password" text="PASSWORD" error={state?.errors?.password}></FormField>
+                    </FormFields>
+                    <FormButton text="Register" />
+                </Form>
+                <p className="text-stone-200 text-sm">Already have an account? <Link className="text-indigo-400 hover:underline" href="/login">Login</Link></p>
+            </FormBox>
+        </FormBackground>
+    </>
 }
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {

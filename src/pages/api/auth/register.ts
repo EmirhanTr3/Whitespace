@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../lib/prisma";
+import prisma from "../../../lib/prisma";
 import { hash } from "crypto";
-import { RegisterFormSchema } from "@/pages/lib/definitions";
+import { RegisterFormSchema } from "@/lib/definitions";
 
 type ReqData = {
     email: string

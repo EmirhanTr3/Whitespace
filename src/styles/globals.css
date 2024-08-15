@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    #__next,
+    html,
+    body {
+        @apply h-full overflow-hidden;
+    }
+
+    *::-webkit-scrollbar {
+        display: none;
+    }
+}

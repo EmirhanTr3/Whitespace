@@ -2,8 +2,10 @@ import { GetServerSidePropsContext } from "next";
 import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
-import { FormState, LoginFormSchema } from "./lib/definitions";
-import { FormError } from "./components";
+import { FormState, LoginFormSchema } from "../lib/definitions";
+import { Form, FormBackground, FormBox, FormButton, FormField, FormFields, FormHeader } from "../components";
+import Head from "next/head";
+import Link from "next/link";
 
 export default function Login() {
     const emailRef = useRef<HTMLInputElement>(null)
@@ -36,17 +38,24 @@ export default function Login() {
         }
     }
 
-    return <form onSubmit={onSubmit}>
-        <label>Email:</label><br />
-        <input ref={emailRef} type="text" name="email" /><br />
-        {state?.errors?.email && <FormError errors={state.errors.email}/>}
-
-        <label>Password:</label><br />
-        <input ref={passwordRef} type="password" name="password" /><br />
-        {state?.errors?.password && <FormError errors={state.errors.password}/>}
-
-        <button type="submit">Login</button>
-    </form>
+    return <>
+        <Head>
+            <title>Whitespace - Login</title>
+        </Head>
+        <FormBackground>
+            <FormBox>
+                <FormHeader />
+                <Form onSubmit={onSubmit}>
+                    <FormFields>
+                        <FormField ref={emailRef} name="email" text="EMAIL" error={state?.errors?.email}></FormField>
+                        <FormField ref={passwordRef} name="password" type="password" text="PASSWORD" error={state?.errors?.password}></FormField>
+                    </FormFields>
+                    <FormButton text="Login" />
+                </Form>
+                <p className="text-stone-200 text-sm">Need an account? <Link className="text-indigo-400 hover:underline" href="/register">Register</Link></p>
+            </FormBox>
+        </FormBackground>
+    </>
 }
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {

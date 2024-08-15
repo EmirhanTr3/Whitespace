@@ -1,9 +1,9 @@
 import NextAuth, { AuthOptions } from "next-auth"
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import CredentialsProvider from "next-auth/providers/credentials"
-import prisma from "@/pages/lib/prisma"
+import prisma from "@/lib/prisma"
 import { hash } from "crypto"
-import { LoginFormSchema } from "@/pages/lib/definitions"
+import { LoginFormSchema } from "@/lib/definitions"
 
 export const authOptions: AuthOptions = {
     session: {
