@@ -15,6 +15,8 @@ export default function Register() {
     const router = useRouter()
     
     const [state, setState] = useState<FormState>()
+
+    const [failed, setFailed] = useState<Boolean>(false)
     
     async function onSubmit(event: FormEvent) {
         event.preventDefault()
@@ -26,6 +28,7 @@ export default function Register() {
             password: passwordRef.current!.value
         })
         if (!validatedFields.success) {
+            setFailed(false)
             return setState({ errors: validatedFields.error.flatten().fieldErrors })
         } else if (state) {
             setState(undefined)
@@ -43,8 +46,10 @@ export default function Register() {
         })
         const user = await response.json()
 
-        if (user) {
+        if (user.id) {
             router.push("/login")
+        } else {
+            setFailed(true)
         }
     }
 
@@ -55,6 +60,7 @@ export default function Register() {
         <FormBackground>
             <FormBox>
                 <FormHeader />
+                {failed && <p className="text-red-500 list-disc text-sm">A user with provided email already exists.</p>}
                 <Form onSubmit={onSubmit}>
                     <FormFields>
                         <FormField ref={usernameRef} name="username" text="USERNAME" error={state?.errors?.username}></FormField>

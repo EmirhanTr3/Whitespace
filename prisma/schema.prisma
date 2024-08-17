@@ -37,11 +37,12 @@ model Member {
 model Guild {
   id         Int        @id @default(autoincrement())
   name       String
+  icon       String?
   channels   Channel[]
   members    Member[]
   ownerId    Int        @map(name: "owner_id")
-  owner      Member     @relation(name: "owner", fields: [ownerId], references: [id])
-  createdAt  DateTime   @map(name: "created_at")
+  owner      Member     @relation(name: "owner", fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime   @default(now()) @map(name: "created_at")
 
   @@map(name: "guilds")
 }
@@ -50,7 +51,7 @@ model Channel {
   id        Int        @id @default(autoincrement())
   name      String
   guildId   Int        @map(name: "guild_id")
-  guild     Guild      @relation(fields: [guildId], references: [id])
+  guild     Guild      @relation(fields: [guildId], references: [id], onDelete: Cascade)
   messages  Message[]
   createdAt DateTime   @default(now()) @map(name: "created_at")
 
@@ -60,9 +61,9 @@ model Channel {
 model Message {
   id         Int      @id @default(autoincrement())
   channelId  Int      @map(name: "channel_id")
-  channel    Channel  @relation(fields: [channelId], references: [id])
+  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
   authorId   Int      @map(name: "author_id")
-  author     Member   @relation(fields: [authorId], references: [id])
+  author     Member   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   content    String
   createdAt  DateTime @default(now()) @map(name: "created_at")
 

@@ -3,7 +3,7 @@ import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
 import { FormState, LoginFormSchema } from "../lib/definitions";
-import { Form, FormBackground, FormBox, FormButton, FormField, FormFields, FormHeader } from "../components";
+import { Form, FormBackground, FormBox, FormButton, FormError, FormField, FormFields, FormHeader } from "../components";
 import Head from "next/head";
 import Link from "next/link";
 
@@ -13,6 +13,7 @@ export default function Login() {
     const router = useRouter()
 
     const [state, setState] = useState<FormState>()
+    const [failed, setFailed] = useState<Boolean>(false)
 
     async function onSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault()
@@ -22,6 +23,7 @@ export default function Login() {
             password: passwordRef.current!.value
         })
         if (!validatedFields.success) {
+            setFailed(false)
             return setState({ errors: validatedFields.error.flatten().fieldErrors })
         } else if (state) {
             setState(undefined)
@@ -35,6 +37,8 @@ export default function Login() {
 
         if (response && response?.ok) {
             router.push("/")
+        } else {
+            setFailed(true)
         }
     }
 
@@ -45,6 +49,7 @@ export default function Login() {
         <FormBackground>
             <FormBox>
                 <FormHeader />
+                {failed && <p className="text-red-500 list-disc text-sm">Invalid email or password provided.</p>}
                 <Form onSubmit={onSubmit}>
                     <FormFields>
                         <FormField ref={emailRef} name="email" text="EMAIL" error={state?.errors?.email}></FormField>

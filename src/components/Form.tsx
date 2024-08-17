@@ -1,5 +1,4 @@
 import { FormEvent, forwardRef, ReactNode } from "react";
-import { FormError } from ".";
 
 export function FormBackground({ children }: { children: ReactNode }) {
     return <div className="bg-gray-900 w-full h-full flex justify-center items-center">
@@ -43,3 +42,11 @@ export const FormField = forwardRef<HTMLInputElement, { name: string, type?: str
         {props.error && <FormError errors={props.error}/>}
     </div>
 })
+
+export function FormError({ errors }: { errors: string[] }) {
+    return <ul>
+        {errors.map((error) => (
+            <li key={error} className="text-red-500 list-disc ml-5 text-sm">{error}</li>
+        ))}
+    </ul>
+}

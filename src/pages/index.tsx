@@ -1,13 +1,25 @@
 import Head from "next/head";
 import { Roboto } from "next/font/google";
 import { getSession, useSession } from "next-auth/react";
-import Link from "next/link";
 import { GetServerSidePropsContext } from "next";
 
 const inter = Roboto({ subsets: ["latin"], weight: "400" });
 
 export default function Home() {
-    const session = useSession();
+    const session = useSession()
+
+    async function click() {
+        const response = await fetch("/api/guild/create", {
+            method: 'POST',
+            body: JSON.stringify({
+                name: "test",
+                ownerId: 1
+            }),
+            headers: { "Content-Type": "application/json" }
+        })
+
+        console.log(response)
+    }
 
     return <>
         <Head>
@@ -16,10 +28,14 @@ export default function Home() {
             <meta name="viewport" content="width=device-width, initial-scale=1" />
             <link rel="icon" href="/favicon.ico" />
         </Head>
-        <main className={inter.className}>
-            <p>Whitespace</p>
+        <main className={inter.className + " h-full bg-neutral-800 flex flex-row"}>
+            <div className="bg-neutral-900 w-[70px]">
+                <button onClick={click}>create guild</button>
+
+            </div>
+            {/* <p>Whitespace</p>
             {session.data && <p>{ session.data.user?.name } love Whitespace</p>}
-            <Link href="api/auth/signout">Login</Link>
+            <Link href="api/auth/signout">Login</Link> */}
         </main>
     </>
 }

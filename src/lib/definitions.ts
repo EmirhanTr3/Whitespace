@@ -16,7 +16,7 @@ export const RegisterFormSchema = z.object({
         .string()
         .min(2, { message: 'Minimum 2 characters.' })
         .max(32, { message: 'Maximum 32 characters.' })
-        .regex(/[a-z0-9]/, { message: 'No uppercase or special characters.' })
+        .regex(/^[a-z0-9._]+$/, { message: 'No uppercase or special characters.' })
         .trim(),
     displayname: z
         .string()
