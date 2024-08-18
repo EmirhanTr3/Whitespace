@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Roboto } from "next/font/google";
-import { getSession, useSession } from "next-auth/react";
+import { getSession, signOut, useSession } from "next-auth/react";
 import { GetServerSidePropsContext } from "next";
 
 const inter = Roboto({ subsets: ["latin"], weight: "400" });
@@ -9,11 +9,12 @@ export default function Home() {
     const session = useSession()
 
     async function click() {
+        if (!session.data?.user ) return;
         const response = await fetch("/api/guild/create", {
             method: 'POST',
             body: JSON.stringify({
                 name: "test",
-                ownerId: 1
+                ownerId: session.data.user?.id
             }),
             headers: { "Content-Type": "application/json" }
         })
@@ -36,6 +37,7 @@ export default function Home() {
             {/* <p>Whitespace</p>
             {session.data && <p>{ session.data.user?.name } love Whitespace</p>}
             <Link href="api/auth/signout">Login</Link> */}
+            <button onClick={() => signOut()}>END ALL BE ALL BUTTON</button>
         </main>
     </>
 }
