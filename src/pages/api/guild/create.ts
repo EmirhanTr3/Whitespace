@@ -12,7 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const guild = await prisma.guild.create({
         data: {
             name: name,
-            ownerId: ownerId
+            owner: {
+                connect: {
+                    id: ownerId
+                }
+            }
         },
         
     })
