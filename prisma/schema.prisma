@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model User {
   id            Int       @id @default(autoincrement())
   username      String    @unique
@@ -15,23 +16,19 @@ model User {
   password      String
   avatar        String?
   badges        String[]  @default([])
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  createdAt     DateTime  @default(now()) 
+  updatedAt     DateTime  @updatedAt 
 
-  Member Member[] @ignore
+  Member Member[]
 
-  @@map(name: "users")
 }
 
 model Member {
   id    Int   @id
   user  User  @relation(fields: [id], references: [id])
 
-  guild   Guild[]    @ignore
-  guild2  Guild[]    @relation(name: "owner") @ignore
-  Message Message[]  @ignore
-
-  @@map(name: "members")
+  Message Message[] 
+  Guild Guild[]
 }
 
 model Guild {
@@ -39,33 +36,26 @@ model Guild {
   name       String
   icon       String?
   channels   Channel[]
-  members    Member[]
-  ownerId    Int        @map(name: "owner_id")
-  owner      Member     @relation(name: "owner", fields: [ownerId], references: [id], onDelete: Cascade)
-  createdAt  DateTime   @default(now()) @map(name: "created_at")
-
-  @@map(name: "guilds")
+  ownerId    Int        
+  owner      Member     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime   @default(now()) 
 }
 
 model Channel {
   id        Int        @id @default(autoincrement())
   name      String
-  guildId   Int        @map(name: "guild_id")
+  guildId   Int        
   guild     Guild      @relation(fields: [guildId], references: [id], onDelete: Cascade)
   messages  Message[]
-  createdAt DateTime   @default(now()) @map(name: "created_at")
-
-  @@map(name: "channels")
+  createdAt DateTime   @default(now()) 
 }
 
 model Message {
   id         Int      @id @default(autoincrement())
-  channelId  Int      @map(name: "channel_id")
+  channelId  Int      
   channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  authorId   Int      @map(name: "author_id")
+  authorId   Int      
   author     Member   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   content    String
-  createdAt  DateTime @default(now()) @map(name: "created_at")
-
-  @@map(name: "messages")
+  createdAt  DateTime @default(now()) 
 }
