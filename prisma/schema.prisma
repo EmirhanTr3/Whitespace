@@ -24,23 +24,30 @@ model User {
 }
 
 model Member {
-  id    Int   @id
-  user  User  @relation(fields: [id], references: [id])
-
-  Message Message[] 
-  Guild Guild[]
+  id        Int      @id
+  user      User     @relation(fields: [id], references: [id])
+  messages  Message[]
+  guilds    GuildMember[]
 }
 
 model Guild {
-  id         Int        @id @default(autoincrement())
-  name       String
-  icon       String?
-  channels   Channel[]
-  ownerId    Int        
-  owner      Member     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  createdAt  DateTime   @default(now()) 
+  id        Int      @id @default(autoincrement())
+  name      String
+  icon      String?
+  channels  Channel[]
+  createdAt DateTime @default(now())
+  members   GuildMember[]
 }
 
+model GuildMember {
+  id        Int      @id @default(autoincrement())
+  memberId  Int
+  guildId   Int
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  guild     Guild    @relation(fields: [guildId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, guildId])
+}
 model Channel {
   id        Int        @id @default(autoincrement())
   name      String
