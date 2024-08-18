@@ -8,14 +8,17 @@ import { LoginFormSchema } from "@/lib/definitions"
 declare module "next-auth" {
   interface Session {
     user: {
-      id: string
+        id: number,
     } & DefaultSession["user"]
+    member: {
+        id: number
+    }
   }
 }
 
 declare module "next-auth/jwt" {
    interface JWT {
-       id: string
+       id: number
        name: string
        email: string
     } 
@@ -65,15 +68,22 @@ export const authOptions: AuthOptions = {
     callbacks: {
         jwt: async ({ token, user }) => {
             if (user) {
-                token.id = user.id;
+                // @ts-ignore
+                token.id = user.id
                 // token.name = user.name;
                 // token.email = user.email;
             }
             return token;
         },
         session: async ({ session, token }) => {
-            if (token) { // Check if token exists before accessing its properties
+            const member = await prisma.member.findUnique({
+                where: {
+                    id: token.id
+                }
+            })
+            if (token && member) { // Check if token exists before accessing its properties
                 session.user.id = token.id;
+                session.member = member
             }
             return session;
         }
