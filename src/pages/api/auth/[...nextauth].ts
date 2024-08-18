@@ -36,33 +36,33 @@ export const authOptions: AuthOptions = {
     },
     providers: [
         CredentialsProvider({
-        name: 'Credentials',
-        credentials: {
-            email: { label: "Email", type: "email" },
-            password: { label: "Password", type: "password" }
-            },
-        // @ts-ignore
-        async authorize(credentials, req) {
-            if (!credentials) return null;
+            name: 'Credentials',
+            credentials: {
+                email: { label: "Email", type: "email" },
+                password: { label: "Password", type: "password" }
+                },
+            // @ts-ignore
+            async authorize(credentials, req) {
+                if (!credentials) return null;
 
-            const validatedFields = LoginFormSchema.safeParse({
-            email: credentials.email,
-            password: credentials.password
-            })
-            if (!validatedFields.success) return null;
+                const validatedFields = LoginFormSchema.safeParse({
+                email: credentials.email,
+                password: credentials.password
+                })
+                if (!validatedFields.success) return null;
 
-            const user = await prisma.user.findUnique({
-            where: {
-                email: credentials?.email,
-                password: hash("sha256", credentials?.password)
+                const user = await prisma.user.findUnique({
+                where: {
+                    email: credentials?.email,
+                    password: hash("sha256", credentials?.password)
+                }
+                })
+
+                if (user) {
+                return { ...user }
+                }
+                return null
             }
-            })
-
-            if (user) {
-            return { ...user }
-            }
-            return null
-        }
         })
     ],
     callbacks: {
