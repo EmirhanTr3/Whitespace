@@ -34,8 +34,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 data: {
                     email: email,
                     password: hash("sha256", password),
-                    username: username,
-                    displayname: displayname
+                    displayname: displayname,
+                    username: username
+                },
+            })
+            const member = await prisma.member.create({
+                data: {
+                    user: {
+                        connect: {
+                            id: user.id
+                        }
+                    },
                 }
             })
 
