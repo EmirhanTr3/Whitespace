@@ -19,7 +19,6 @@ export const authOptions: AuthOptions = {
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" }
             },
-            /** @ts-ignore */
             async authorize(credentials, req) {
                 if (!credentials) return null;
 
@@ -37,14 +36,27 @@ export const authOptions: AuthOptions = {
                 })
         
                 if (user) {
-                    return {...user, name: user.displayname}
+                    return user
                 }
                 return null
             }
         })
     ],
     callbacks: {
+        jwt: async ({ token, user }) => {
+            if (user) {
+                token.id = typeof user.id == "number" ? user.id : parseInt(user.id);
+                token.username = user.username;
+            }
+            console.log(token, user)
+            return token;
+        },
         session: async ({ session, user }) => {
+            if (user) {
+                session.id = parseInt(user.id)
+                session.username = user.username
+            }
+            console.log(session, user)
             return session
         },
     },

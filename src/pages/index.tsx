@@ -9,7 +9,7 @@ export default function Home() {
     const session = useSession()
 
     async function click() {
-        const response = await fetch("/api/guild/create", {
+        const response = await fetch("/api/guilds", {
             method: 'POST',
             body: JSON.stringify({
                 name: "test",
