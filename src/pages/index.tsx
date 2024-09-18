@@ -43,9 +43,9 @@ export default function Home() {
         <main className={inter.className + " h-full bg-neutral-800 flex flex-row"}>
             <div className="bg-neutral-900 w-[72px] py-3 flex flex-col items-center gap-2 overflow-y-auto">
                 {guilds && guilds.map(guild =>
-                    <div key={guild.id} className="w-[48px] h-[48px]">
+                    <div key={guild.id} className="w-[48px] h-[48px] group">
                         <div className="w-[4px] h-[48px] absolute left-0 flex items-center">
-                            <div className="bg-white w-full h-[24px] rounded-r-md"/>
+                            <div className="opacity-0 group-hover:opacity-100 transition-all ease-in-out duration-300 bg-white w-full h-[20px] rounded-r-md"/>
                         </div>
                         {guild.icon ?
                             <img className="transition-all ease-in-out w-[48px] h-[48px] rounded-[50%] hover:rounded-2xl duration-300 cursor-pointer" src={guild.icon} /> :
