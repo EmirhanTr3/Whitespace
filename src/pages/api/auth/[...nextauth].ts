@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "@/lib/prisma"
 import { hash } from "crypto"
 import { LoginFormSchema } from "@/lib/definitions"
+import { redirect } from "next/navigation"
 
 export const authOptions: AuthOptions = {
     session: {
@@ -36,28 +37,42 @@ export const authOptions: AuthOptions = {
                 })
         
                 if (user) {
-                    return user
+                    return {
+                        id: user.id,
+                        username: user.username
+                    }
                 }
                 return null
             }
         })
     ],
     callbacks: {
-        jwt: async ({ token, user }) => {
+        jwt: ({ token, user }) => {
             if (user) {
-                token.id = typeof user.id == "number" ? user.id : parseInt(user.id);
-                token.username = user.username;
+                return {
+                    ...token,
+                    id: user.id = typeof user.id == "number" ? user.id : parseInt(user.id),
+                    username: token.username = user.username
+                }
             }
-            console.log(token, user)
-            return token;
+            return token
         },
-        session: async ({ session, user }) => {
-            if (user) {
-                session.id = parseInt(user.id)
-                session.username = user.username
+        // @ts-ignore
+        session: async ({ session, token }) => {
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: token.id
+                }
+            })
+            if (!user) return {}
+
+            return {
+                ...session,
+                user: {
+                    id: token.id,
+                    username: token.username
+                }
             }
-            console.log(session, user)
-            return session
         },
     },
     adapter: PrismaAdapter(prisma),
