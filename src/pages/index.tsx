@@ -3,7 +3,8 @@ import { Roboto } from "next/font/google";
 import { getSession, useSession } from "next-auth/react";
 import { GetServerSidePropsContext } from "next";
 import Dialogs from "@/components/dialogs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import guilds from "./api/guilds";
 
 const inter = Roboto({ subsets: ["latin"], weight: "400" });
 
@@ -15,8 +16,7 @@ export default function Home() {
         const response = await fetch("/api/guilds", {
             method: 'POST',
             body: JSON.stringify({
-                name: "test",
-                ownerId: 1
+                name: "test"
             }),
             headers: { "Content-Type": "application/json" }
         })
@@ -33,7 +33,7 @@ export default function Home() {
         </Head>
         <main className={inter.className + " h-full bg-neutral-800 flex flex-row"}>
             <div className="bg-neutral-900 w-[70px]">
-                <button onClick={() => click()}>create guild</button>
+                <button onClick={() => setIsOpen(true)}>create guild</button>
             </div>
             <Dialogs isOpen={isOpen} setIsOpen={setIsOpen} />
             {/* <p>Whitespace</p>

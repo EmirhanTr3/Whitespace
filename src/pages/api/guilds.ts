@@ -1,36 +1,42 @@
 import prisma from "@/lib/prisma"
 import { NextApiRequest, NextApiResponse } from "next"
-import { getServerSession } from "next-auth"
-import { authOptions } from "./auth/[...nextauth]"
+import { validateSession } from "@/lib/utils"
 
 type ReqData = {
-    name: string,
-    ownerId: number
+    name: string
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method == "POST") {
-        const session = await getServerSession(req, res, authOptions)
-        console.log(session)
-        if (!session) {
-            res.status(401).json({error: "Unauthorized"})
-            return;
-        }
+    if (req.method == "GET") {
+        const session = await validateSession(req, res)
+        if (!session) return;
 
-        const { name, ownerId }: ReqData = req.body
-        if (!name || !ownerId) {
-            res.status(400).json({error: "Missing name or ownerId"})
-            return;
-        }
+        const guilds = await prisma.guild.findMany({
+            where: {
+                members: {
+                    some: {
+                        userId: session.user.id
+                    }
+                }
+            }
+        })
 
-        if (ownerId != session.id) {
-            res.status(401).json({error: "Id does not match current user."})
+        res.status(200).json(guilds)
+
+    } else if (req.method == "POST") {
+        const session = await validateSession(req, res)
+        if (!session) return;
+
+        const { name }: ReqData = req.body
+        if (!name) {
+            res.status(400).json({error: "Missing guild name"})
+            return;
         }
         
         const guild = await prisma.guild.create({
             data: {
                 name: name,
-                ownerId: ownerId
+                ownerId: session.user.id
             },
         })
 
@@ -41,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: {
                 members: {
                     create: {
-                        userId: ownerId,
+                        userId: session.user.id,
                         guildId: guild.id
                     }
                 }
