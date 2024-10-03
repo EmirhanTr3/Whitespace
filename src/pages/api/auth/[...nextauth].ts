@@ -35,11 +35,12 @@ export const authOptions: AuthOptions = {
                         password: hash("sha256", credentials?.password)
                     }
                 })
-        
+
                 if (user) {
                     return {
                         id: user.id,
-                        username: user.username
+                        username: user.username,
+                        displayname: user.displayname
                     }
                 }
                 return null
@@ -49,11 +50,9 @@ export const authOptions: AuthOptions = {
     callbacks: {
         jwt: ({ token, user }) => {
             if (user) {
-                return {
-                    ...token,
-                    id: user.id = typeof user.id == "number" ? user.id : parseInt(user.id),
-                    username: token.username = user.username
-                }
+                token.id = typeof user.id == "number" ? user.id : parseInt(user.id)
+                token.username = user.username
+                token.displayname = user.displayname
             }
             return token
         },
@@ -70,7 +69,8 @@ export const authOptions: AuthOptions = {
                 ...session,
                 user: {
                     id: token.id,
-                    username: token.username
+                    username: token.username,
+                    displayname: token.displayname
                 }
             }
         },

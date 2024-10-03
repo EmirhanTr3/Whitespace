@@ -35,6 +35,14 @@ export const RegisterFormSchema = z.object({
         .regex(/[^a-zA-Z0-9]/, { message: 'Have at least one special character.' })
         .trim(),
 })
+
+export const CreateGuildFormSchema = z.object({
+    name: z
+        .string()
+        .min(1, { message: 'Server name cannot be empty.' })
+        .max(32, { message: 'Maximum 32 characters.'})
+        .trim()
+})
  
 export type FormState =
   | {
@@ -42,7 +50,8 @@ export type FormState =
         username?: string[]
         displayname?: string[]
         email?: string[]
-        password?: string[]
+        password?: string[],
+        name?: string[]
       }
       message?: string
     }
