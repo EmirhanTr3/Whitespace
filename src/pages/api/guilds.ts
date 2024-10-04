@@ -2,14 +2,42 @@ import prisma from "@/lib/prisma"
 import { NextApiRequest, NextApiResponse } from "next"
 import { validateSession } from "@/lib/utils"
 
-type ReqData = {
-    name: string
-}
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method == "GET") {
         const session = await validateSession(req, res)
         if (!session) return;
+
+        const { id } = req.query
+
+        if (id) {
+            if (!parseInt(id as string)) {
+                res.status(400).json({error: "Invalid ID provided"})
+                return;
+            }
+
+            const guild = await prisma.guild.findUnique({
+                where: {
+                    id: parseInt(id as string),
+                    members: {
+                        some: {
+                            userId: session.user.id
+                        }
+                    }
+                },
+                include: {
+                    members: true,
+                    channels: true
+                }
+            })
+
+            if (!guild) {
+                res.status(400).json({error: "Guild not found"})
+                return;
+            }
+
+            res.status(200).json(guild)
+            return;
+        }
 
         const guilds = await prisma.guild.findMany({
             where: {
@@ -27,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const session = await validateSession(req, res)
         if (!session) return;
 
-        const { name }: ReqData = req.body
+        const { name }: { name: string } = req.body
         if (!name) {
             res.status(400).json({error: "Missing guild name"})
             return;
@@ -49,6 +77,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     create: {
                         userId: session.user.id,
                         guildId: guild.id
+                    }
+                },
+                channels: {
+                    create: {
+                        name: "General"
                     }
                 }
             }

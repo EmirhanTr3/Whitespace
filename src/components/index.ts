@@ -6,6 +6,11 @@ import { FormButton } from "./Form"
 import { FormHeader } from "./Form"
 import { FormField } from "./Form"
 import { FormError } from "./Form"
+import GuildBar from "./GuildBar"
+import GuildInfo from "./GuildInfo"
+import { Modal } from "./Modal"
+import { ModalInputField } from "./Modal"
+import ChannelInfo from "./ChannelInfo"
 
 export {
     FormBackground,
@@ -15,5 +20,10 @@ export {
     FormButton,
     FormHeader,
     FormField,
-    FormError
+    FormError,
+    GuildBar,
+    GuildInfo,
+    Modal,
+    ModalInputField,
+    ChannelInfo
 }

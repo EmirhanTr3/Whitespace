@@ -43,7 +43,15 @@ export const CreateGuildFormSchema = z.object({
         .max(32, { message: 'Maximum 32 characters.'})
         .trim()
 })
- 
+
+export const CreateChannelFormSchema = z.object({
+    name: z
+        .string()
+        .min(1, { message: 'Channel name cannot be empty.' })
+        .max(32, { message: 'Maximum 32 characters.'})
+        .trim()
+})
+
 export type FormState =
   | {
       errors?: {
