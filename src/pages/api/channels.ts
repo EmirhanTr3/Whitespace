@@ -19,7 +19,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 id: parseInt(id as string)
             },
             include: {
-                guild: true
+                guild: true,
+                messages: {
+                    include: {
+                        author: {
+                            include: {
+                                user: true
+                            }
+                        }
+                    }
+                }
             }
         })
 

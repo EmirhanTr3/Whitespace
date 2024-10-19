@@ -11,6 +11,7 @@ import GuildInfo from "./GuildInfo"
 import { Modal } from "./Modal"
 import { ModalInputField } from "./Modal"
 import ChannelInfo from "./ChannelInfo"
+import { SocketProvider, useSocket } from "./providers/SocketProvider"
 
 export {
     FormBackground,
@@ -25,5 +26,7 @@ export {
     GuildInfo,
     Modal,
     ModalInputField,
-    ChannelInfo
+    ChannelInfo,
+    SocketProvider,
+    useSocket
 }

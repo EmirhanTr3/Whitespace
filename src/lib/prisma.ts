@@ -1,4 +1,4 @@
-import { PrismaClient, Channel as PChannel, Guild as PGuild, Member } from "@prisma/client";
+import { PrismaClient, Channel as PChannel, Guild as PGuild, Member as PMember, Message as PMessage, User as PUser} from "@prisma/client";
 
 const prisma = new PrismaClient()
 
@@ -6,9 +6,18 @@ export default prisma
 
 export type Guild = PGuild & {
     channels: PChannel[],
-    members: Member[]
+    members: PMember[]
 }
 
 export type Channel = PChannel & {
-    guild: PGuild
+    guild: PGuild,
+    messages?: Message[]
+}
+
+export type Message = PMessage & {
+    author: Member
+}
+
+export type Member = PMember & {
+    user: PUser
 }
